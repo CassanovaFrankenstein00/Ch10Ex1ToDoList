@@ -11,60 +11,64 @@ namespace ToDoList.Controllers
 
         public ViewResult Index(string id)
         {
-            // load current filters and data needed for filter drop downs in ViewBag
-            var filters = new Filters(id);
-            ViewBag.Filters = filters;
-            ViewBag.Categories = context.Categories.ToList();
-            ViewBag.Statuses = context.Statuses.ToList();
-            ViewBag.DueFilters = Filters.DueFilterValues;
+            // load current filters and data needed for filter drop downs in ToDoViewModel
+            var model = new ToDoViewModel {
+                Filters = new Filters(id),
+                Categories = context.Categories.ToList(),
+                Statuses = context.Statuses.ToList(),
+                DueFilters = Filters.DueFilterValues
+            };
 
             // get open tasks from database based on current filters
             IQueryable<ToDo> query = context.ToDos
                 .Include(t => t.Category).Include(t => t.Status);
 
-            if (filters.HasCategory) {
-                query = query.Where(t => t.CategoryId == filters.CategoryId);
+            if (model.Filters.HasCategory) {
+                query = query.Where(t => t.CategoryId == model.Filters.CategoryId);
             }
-            if (filters.HasStatus) {
-                query = query.Where(t => t.StatusId == filters.StatusId);
+            if (model.Filters.HasStatus) {
+                query = query.Where(t => t.StatusId == model.Filters.StatusId);
             }
-            if (filters.HasDue) {
+            if (model.Filters.HasDue) {
                 var today = DateTime.Today;
-                if (filters.IsPast)
+                if (model.Filters.IsPast)
                     query = query.Where(t => t.DueDate < today);
-                else if (filters.IsFuture)
+                else if (model.Filters.IsFuture)
                     query = query.Where(t => t.DueDate > today);
-                else if (filters.IsToday)
+                else if (model.Filters.IsToday)
                     query = query.Where(t => t.DueDate == today);
             }
             var tasks = query.OrderBy(t => t.DueDate).ToList();
 
-            return View(tasks);
+            return View(model);
         }
 
         [HttpGet]
         public ViewResult Add()
         {
-            ViewBag.Categories = context.Categories.ToList();
-            ViewBag.Statuses = context.Statuses.ToList();
-            var task = new ToDo { StatusId = "open" };  // set default value for drop-down
-            return View(task);
+            ToDoViewModel myToDoModelView = new ToDoViewModel();
+
+            myToDoModelView.Categories = context.Categories.ToList();
+            myToDoModelView.Statuses = context.Statuses.ToList();
+            myToDoModelView.CurrentTask = new ToDo { StatusId = "open" };  // set default value for drop-down
+            return View(myToDoModelView);
+
         }
 
         [HttpPost]
-        public IActionResult Add(ToDo task)
+        public IActionResult Add(ToDoViewModel model)
         {
             if (ModelState.IsValid)
             {
-                context.ToDos.Add(task);
+                context.ToDos.Add(model.CurrentTask);
                 context.SaveChanges();
                 return RedirectToAction("Index");
             }
             else
             {
-                ViewBag.Categories = context.Categories.ToList();
-                ViewBag.Statuses = context.Statuses.ToList();
-                return View(task);
+                model.Categories = context.Categories.ToList();
+                model.Statuses = context.Statuses.ToList();
+                return View(model);
             }
         }
 

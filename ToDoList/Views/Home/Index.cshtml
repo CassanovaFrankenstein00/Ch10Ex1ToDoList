@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ToDo>
+﻿@model ToDoViewModel
 
 <div class="row">
     <div class="col-md-2">
@@ -6,24 +6,24 @@
             <div class="mb-3">
                 <label class="form-label">Category:</label>
                 <select name="filter" class="form-select"
-                        asp-items="@(new SelectList(ViewBag.Categories,
-                    "CategoryId", "Name", ViewBag.Filters.CategoryId))">
+                        asp-items="@(new SelectList(Model.Categories,
+                    "CategoryId", "Name", Model.Filters.CategoryId))">
                     <option value="all">All</option>
                 </select>
             </div>
             <div class="mb-3">
                 <label class="form-label">Due:</label>
                 <select name="filter" class="form-select"
-                        asp-items="@(new SelectList(ViewBag.DueFilters,
-                    "Key", "Value", ViewBag.Filters.Due))">
+                        asp-items="@(new SelectList(Model.DueFilters,
+                    "Key", "Value", Model.Filters.Due))">
                     <option value="all">All</option>
                 </select>
             </div>
             <div class="mb-3">
                 <label class="form-label">Status:</label>
                 <select name="filter" class="form-select"
-                        asp-items="@(new SelectList(ViewBag.Statuses,
-                    "StatusId", "Name", ViewBag.Filters.StatusId))">
+                        asp-items="@(new SelectList(Model.Statuses,
+                    "StatusId", "Name", Model.Filters.StatusId))">
                     <option value="all">All</option>
                 </select>
             </div>
@@ -34,7 +34,7 @@
     <div class="col-md-10">
 
         <form asp-action="MarkComplete" method="post" 
-            asp-route-id="@ViewBag.Filters.FilterString">
+            asp-route-id="@Model.Filters.FilterString">
 
             <table class="table table-bordered table-striped mt-2">
                 <thead>
@@ -47,7 +47,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                @foreach (ToDo task in Model)
+                @foreach (ToDo task in Model.Tasks)
                 {
                     string overdue = task.Overdue ? "bg-warning" : "";
                     <tr>
@@ -70,7 +70,7 @@
             </table>
         </form>
         <form asp-action="DeleteComplete" method="post" 
-            asp-route-id="@ViewBag.Filters.FilterString">
+            asp-route-id="@Model.Filters.FilterString">
 
             <a asp-action="Add" class="btn btn-primary">Add new task</a>
             <button type="submit" class="btn btn-primary">Delete completed tasks</button>

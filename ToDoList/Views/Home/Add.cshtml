@@ -1,4 +1,4 @@
-﻿@model ToDo
+﻿@model ToDoViewModel
 
 <h2>New Task</h2>
 
@@ -7,27 +7,27 @@
 <form asp-action="Add" method="post">
 
     <div class="mb-3">
-        <label asp-for="Description" class="form-label">Description:</label>
-        <input asp-for="Description" class="form-control">
+        <label asp-for="CurrentTask.Description" class="form-label">Description:</label>
+        <input asp-for="CurrentTask.Description" class="form-control">
     </div>
 
     <div class="mb-3">
-        <label asp-for="CategoryId" class="form-label">Category:</label>
-        <select asp-for="CategoryId" class="form-select"
-                asp-items="@(new SelectList(ViewBag.Categories, "CategoryId", "Name"))">
+        <label asp-for="CurrentTask.CategoryId" class="form-label">Category:</label>
+        <select asp-for="CurrentTask.CategoryId" class="form-select"
+                asp-items="@(new SelectList(Model.Categories, "CategoryId", "Name"))">
             <option value=""></option>
         </select>
     </div>
         
     <div class="mb-3">
-        <label asp-for="DueDate" class="form-label">Due Date:</label>
-        <input asp-for="DueDate" class="form-control" type="text">
+        <label asp-for="CurrentTask.DueDate" class="form-label">Due Date:</label>
+        <input asp-for="CurrentTask.DueDate" class="form-control" type="text">
     </div>
 
     <div class="mb-3">
-        <label asp-for="StatusId" class="form-label">Status:</label>
-        <select asp-for="StatusId" class="form-select"
-                asp-items="@(new SelectList(ViewBag.Statuses, "StatusId", "Name"))">
+        <label asp-for="CurrentTask.StatusId" class="form-label">Status:</label>
+        <select asp-for="CurrentTask.StatusId" class="form-select"
+                asp-items="@(new SelectList(Model.Statuses, "StatusId", "Name"))">
         </select>
     </div>
 
